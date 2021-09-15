@@ -49,6 +49,12 @@
 			<artifactId>commons-csv</artifactId>
 		</dependency>
 
+                <dependency>
+                        <groupId>commons-fileupload</groupId>
+                        <artifactId>commons-fileupload</artifactId>
+                        <version>1.4</version>
+                </dependency>
+
 		<dependency>
 			<groupId>co.elastic.apm</groupId>
 			<artifactId>apm-agent-api</artifactId>
