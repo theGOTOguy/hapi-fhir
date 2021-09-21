@@ -81,8 +81,8 @@ public class BulkDataImportProvider {
 	public void imprt(
 		@OperationParam(name = JpaConstants.PARAM_IMPORT_JOB_DESCRIPTION, min = 0, max = 1, typeName = "string") IPrimitiveType<String> theJobDescription,
 		@OperationParam(name = JpaConstants.PARAM_IMPORT_PROCESSING_MODE, min = 0, max = 1, typeName = "string") IPrimitiveType<String> theProcessingMode,
-		@OperationParam(name = JpaConstants.PARAM_IMPORT_FILE_COUNT, min = 0, max = 1, typeName = "int") IPrimitiveType<Integer> theFileCount,
-		@OperationParam(name = JpaConstants.PARAM_IMPORT_BATCH_SIZE, min = 0, max = 1, typeName = "int") IPrimitiveType<Integer> theBatchSize,
+		@OperationParam(name = JpaConstants.PARAM_IMPORT_FILE_COUNT, min = 0, max = 1, typeName = "integer") IPrimitiveType<Integer> theFileCount,
+		@OperationParam(name = JpaConstants.PARAM_IMPORT_BATCH_SIZE, min = 0, max = 1, typeName = "integer") IPrimitiveType<Integer> theBatchSize,
 		ServletRequestDetails theRequestDetails
 	) {
                 validatePreferAsyncHeader(theRequestDetails);
@@ -123,7 +123,9 @@ public class BulkDataImportProvider {
 
                                                 ByteArrayOutputStream theOutputStream = new ByteArrayOutputStream();
                                                 theMultipartStream.readBodyData(theOutputStream);
-                                                theJobFile.setContents(theOutputStream.toString(theRequestDetails.getCharset()));
+                                                // TODO:  In a later version of Java, theOutputStream.toString()
+                                                // accepts theRequestDetails.getCharset().
+                                                theJobFile.setContents(theOutputStream.toString());
 
                                                 theInitialFiles.add(theJobFile);
                                                 nextPart = theMultipartStream.readBoundary();
@@ -136,6 +138,8 @@ public class BulkDataImportProvider {
                 } else {
                         throw new InvalidRequestException("Content-Type must be multipart/form-data for $import.");
                 }
+
+                ourLog.info("Done parsing...");
 
                 // If theFileCount is null, let's substitute the count from the multipart stream.
                 theImportJobJson.setFileCount(theFileCount == null ? theInitialFiles.size() : theFileCount.getValue());
